@@ -5,11 +5,29 @@ import seaborn as sns
 
 st.sidebar.title("Whatsapp Chat Analyzer")
 
-uploaded_file = st.sidebar.file_uploader("Choose a file")
+import zipfile
+import io
+
+uploaded_file = st.sidebar.file_uploader("Upload WhatsApp Chat", type=['txt', 'zip'])
+
 if uploaded_file is not None:
-    bytes_data = uploaded_file.getvalue()
-    data = bytes_data.decode("utf-8")
-    df = preprocessor.preprocess(data)
+    if uploaded_file.name.endswith('.zip'):
+        with zipfile.ZipFile(uploaded_file) as z:
+            txt_files = [f for f in z.namelist() if f.endswith('.txt')]
+            if not txt_files:
+                st.error("No .txt file found in the ZIP archive.")
+            else:
+                # Read the first txt file
+                with z.open(txt_files[0]) as f:
+                    data = f.read().decode('utf-8')
+                    df = preprocessor.preprocess(data)
+    elif uploaded_file.name.endswith('.txt'):
+        bytes_data = uploaded_file.getvalue()
+        data = bytes_data.decode("utf-8")
+        df = preprocessor.preprocess(data)
+    else:
+        st.error("Unsupported file type. Please upload a .txt or .zip file.")
+
 
     # fetch unique users
     user_list = df['user'].unique().tolist()
