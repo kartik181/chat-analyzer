@@ -9,14 +9,15 @@ def preprocess(data):
 
     df = pd.DataFrame({'user_message': messages, 'message_date': dates})
     # convert message_date type
-    df['message_date'] = pd.to_datetime(df['message_date'], format='%d/%m/%Y, %H:%M - ')
+    df['message_date'] = pd.to_datetime(df['message_date'], format='%d/%m/%y, %H:%M - ')
+
 
     df.rename(columns={'message_date': 'date'}, inplace=True)
 
     users = []
     messages = []
     for message in df['user_message']:
-        entry = re.split('([\w\W]+?):\s', message)
+        entry = re.split(r'([\w\W]+?):\s', message)
         if entry[1:]:  # user name
             users.append(entry[1])
             messages.append(" ".join(entry[2:]))
@@ -37,15 +38,15 @@ def preprocess(data):
     df['hour'] = df['date'].dt.hour
     df['minute'] = df['date'].dt.minute
 
-    # period = []
-    # for hour in df[['day_name', 'hour']]['hour']:
-    #     if hour == 23:
-    #         period.append(str(hour) + "-" + str('00'))
-    #     elif hour == 0:
-    #         period.append(str('00') + "-" + str(hour + 1))
-    #     else:
-    #         period.append(str(hour) + "-" + str(hour + 1))
+    period = []
+    for hour in df[['day_name', 'hour']]['hour']:
+        if hour == 23:
+            period.append(str(hour) + "-" + str('00'))
+        elif hour == 0:
+            period.append(str('00') + "-" + str(hour + 1))
+        else:
+            period.append(str(hour) + "-" + str(hour + 1))
 
-    # df['period'] = period
+    df['period'] = period
 
     return df
