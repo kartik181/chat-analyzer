@@ -8,7 +8,7 @@ st.sidebar.title("Whatsapp Chat Analyzer")
 import zipfile
 import io
 
-uploaded_file = st.sidebar.file_uploader("Upload WhatsApp Chat", type=['txt', 'zip'])
+uploaded_file = st.sidebar.file_uploader("Upload WhatsApp Chat")
 
 if uploaded_file is not None:
     if uploaded_file.name.endswith('.zip'):
